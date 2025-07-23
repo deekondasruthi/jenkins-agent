@@ -1,0 +1,73 @@
+Step 1: launch 2 EC2 instance.
+(one is for jenkins master and another one is for Slave nodes)
+
+Step 2: In one instance install jenkins
+Pre-requisites to install Jenkins:
+Java
+
+Step 3: create ssh key one public and one private.
+
+Step 4: Before creating ssh key u need to change path.
+Path change command:
+#sudo su - jenkins
+ssh key generating Command:
+#ssk-keygen
+
+Step 5: Copy ssh pub key and paste it in slave instance.
+
+Step 6: login into the slave machine. Create root directory for jenkins.
+
+Step 7: add user
+Command: 
+#sudo adduser jenkins
+#sudo mkdir -p /hoe/jenkins/.shh
+#sudo nano /home/jenkins/.ssh/authorized_keys
+
+Step 8: in authorized_keys file paste ssh public key, where we copied in master machine.
+
+Step 9: Provide permissions for user and ssh key file path.
+Commands: 
+#sudo chown -R jenkins:jenkins /home/jenkins/.ssh
+#sudo chmod 700 /home/jenkins/.ssh
+#sudo chmod 600 /home/jenkins/.ssh/authorized_keys
+
+Step 10: Test the connection from master (Jenkins) to slave machine.
+command :
+#ssh jenkins@<slave ip>
+
+Step 11: Login into the Jenkins Dashboard.
+
+Step 12: Create Node in jenkins.
+Navigate to manage jenkins -> nodes -> Create Node.
+Name: give name for agent sample (slave)
+Typr: Permanent Agent
+Description: optional
+No.of executore: 1 or 2 based on server cpu and memory capacity.
+Remote root directory: /home/jenkins
+Lable: give something to identify agent. (slave)
+usage: use this node as much as possible.
+Launch Method: launch agent via ssh
+  host: ip of slave server 
+  credentials: add credentials 
+    kind : ssh username with private key
+    id : anything to identify easily
+    description: anything to identify easily
+    username: ubuntu
+    private key: copy private key from master node and paste here.
+    save
+  Host Key Verification Strategy: Non verifying Verification Strategy
+  Availability: Keep this agent online as much as possible
+  save
+
+Step 13: Now check the node status, whether syn or not.
+
+Step 14: Crate new Job.
+Step 15: in job configuration in general select Restrict where this project can be run
+in lable give node lable.
+
+
+
+
+
+
+
