@@ -68,6 +68,11 @@ in lable give node lable.
 
 
 
-
+**** If jenkins showing Perission denied error means ****
+Give jenkins user permissions ..
+example:
+/var/www/sruthi/websites/ ------------> this path does not having permission means 
+# sudo chwon -R jenkins:jenkins /var/www/sruthi/websites/
+now we can work on this path
 
 
