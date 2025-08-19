@@ -72,5 +72,3 @@ example:
 /var/www/sruthi/websites/ ------------> this path does not having permission means 
 # sudo chown -R jenkins:jenkins /var/www/sruthi/websites/
 now we can work on this path
-
-
