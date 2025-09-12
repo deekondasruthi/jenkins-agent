@@ -1,5 +1,65 @@
+1. Build Phase
 
-1.sample
-2.check this file
-3.check jenkins job status
-4. test
+This phase is about taking source code → producing a runnable artifact (image).
+It happens inside Jenkins after GitHub push.
+
+Backend (Spring Boot)
+
+Checkout Code – Jenkins pulls latest code from GitHub.
+
+Build JAR – mvn clean install compiles Java and produces a .jar.
+
+Build Docker Image – Jenkins uses the repo’s Dockerfile to create an image:
+
+docker build -t backend:<branch> .
+
+
+<branch> → dev, stag, etc.
+
+Frontend (Angular)
+
+Checkout Code – Jenkins pulls Angular code.
+
+Install Dependencies – npm install.
+
+Build Angular App – ng build creates dist/ folder.
+
+Build Docker Image (if you create one for Nginx) or prepare files for deployment.
+
+✅ End of Build Phase:
+
+Backend → Docker image with Spring Boot JAR.
+
+Frontend → Angular build ready (inside Docker image or copied to server).
+
+🔹 2. Deployment Phase
+
+This phase is about running the new version of the app in UAT server.
+
+Backend
+
+Stop Old Container – docker-compose automatically replaces it.
+
+Deploy New Container:
+
+docker compose -f docker-compose.yaml up -d --no-deps backend-service
+
+
+Uses the new backend image built in Build Phase.
+
+Frontend
+
+Deploy with External Compose File:
+
+docker compose -f /home/docker-compose/frontend-container.yaml up -d --no-deps frontend-service
+
+
+Only the frontend-service is restarted.
+
+Other 20 apps in the YAML remain untouched.
+
+✅ End of Deployment Phase:
+
+Old containers are replaced with new ones.
+
+UAT Dev/Staging servers now run the updated code.
