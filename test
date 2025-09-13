@@ -87,3 +87,31 @@ Add .gitignore (Node for frontend / Maven for backend).
 Add license (optional).
 
 Click Create repository.
+
+
+
+
+CI/CD Workflow in 10 Points
+
+Installed Jenkins on UAT server for automation.
+
+Installed Docker to run applications inside containers.
+
+Created GitHub repositories → one for frontend (Angular), one for backend (Spring Boot).
+
+Set up branching strategy → dev for UAT Dev, stag for UAT Staging, main for production.
+
+Added Jenkinsfiles in repos to define build & deploy steps.
+
+Configured GitHub Webhooks → triggers Jenkins automatically on code push.
+
+Created Multibranch Pipeline jobs in Jenkins for frontend & backend.
+
+Build Phase → frontend uses npm install + ng build, backend uses mvn clean install + docker build.
+
+Deployment Phase → frontend deploys with external YAML (/home/docker-compose/frontend-container.yaml), backend deploys with repo’s docker-compose.
+
+Final Flow → Push to GitHub → Webhook → Jenkins pipeline → Docker deploy → UAT Dev/Staging updated automatically.
+
+👉 Simple line:
+Code push → Jenkins build → Docker deploy → UAT environment updated.
