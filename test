@@ -63,3 +63,27 @@ Other 20 apps in the YAML remain untouched.
 Old containers are replaced with new ones.
 
 UAT Dev/Staging servers now run the updated code.
+
+
+
+
+
+Create Repository
+
+Login to GitHub → https://github.com/new
+
+Fill details:
+
+Repository name → e.g., frontend-repo or backend-repo
+
+Description → “Angular frontend for UAT CI/CD pipeline” / “Spring Boot backend for UAT CI/CD pipeline”
+
+Choose Public (open) or Private (recommended).
+
+Tick Initialize with README (optional).
+
+Add .gitignore (Node for frontend / Maven for backend).
+
+Add license (optional).
+
+Click Create repository.
