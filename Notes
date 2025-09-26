@@ -9,8 +9,10 @@ Pre-requisites to install Jenkins:
 Java
 
 Step 3: create ssh key one public and one private.
+you installed jenkins server will call as a master server.
 
-Step 4: Before creating ssh key u need to change path.
+Step 4: Before creating ssh key you need to change path.
+This will also may say as login as jenkins user.
 Path change command:
 #sudo su - jenkins
 ssh key generating Command:
@@ -23,7 +25,7 @@ Step 6: login into the slave machine. Create root directory for jenkins.
 Step 7: add user
 Command: 
 #sudo adduser jenkins
-#sudo mkdir -p /hoe/jenkins/.shh
+#sudo mkdir -p /home/jenkins/.shh
 #sudo nano /home/jenkins/.ssh/authorized_keys
 
 Step 8: in authorized_keys file paste ssh public key, where we copied in master machine.
