@@ -9,6 +9,13 @@ pipeline {
                 echo "DEBUG: Current branch is ${env.BRANCH_NAME}"
             }
         }
+        stage('Build') {
+            steps {
+                echo "Building branch: ${env.BRANCH_NAME}"
+                sh 'ls -l'
+                echo "DEBUG: Current branch is ${env.BRANCH_NAME}"
+            }
+        }
 
         stage('Print File Content') {
             steps {
