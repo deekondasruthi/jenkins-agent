@@ -119,49 +119,59 @@ stages {
                                     def response = sh(
                                         script: """
                                             curl -s -u \$SONAR_TOKEN: \
-                                            "${SONAR_HOST_URL}/api/measures/component?component=${project.sonarKey}&metricKeys=security_rating,reliability_rating,sqale_rating,coverage,duplicated_lines_density"
+                                            "${SONAR_HOST_URL}/api/measures/component?component=${project.sonarKey}&metricKeys=vulnerabilities,bugs,code_smells,coverage,duplicated_lines_density,security_hotspots_reviewed"
                                         """,
                                         returnStdout: true
                                     ).trim()
 
-                                    def json = readJSON text: response
-                                    def security = "N/A"
-                                    def reliability = "N/A"
-                                    def maintainability = "N/A"
+                                    def vulnerabilities = "0"
+                                    def bugs = "0"
+                                    def codeSmells = "0"
                                     def coverage = "0"
                                     def duplication = "0"
+                                    def hotspots = "0"
 
                                     json.component.measures.each { metric ->
                                         switch(metric.metric) {
-                                            case "security_rating":
-                                                security = metric.value
-                                                break
-                                            case "reliability_rating":
-                                                reliability = metric.value
-                                                break
-                                            case "sqale_rating":
-                                                maintainability = metric.value
-                                                break
-                                            case "coverage":
-                                                coverage = metric.value
-                                                break
-                                            case "duplicated_lines_density":
-                                                duplication = metric.value
-                                                break
-                                        }
+
+    case "vulnerabilities":
+        vulnerabilities = metric.value
+        break
+
+    case "bugs":
+        bugs = metric.value
+        break
+
+    case "code_smells":
+        codeSmells = metric.value
+        break
+
+    case "coverage":
+        coverage = metric.value
+        break
+
+    case "duplicated_lines_density":
+        duplication = metric.value
+        break
+
+    case "security_hotspots_reviewed":
+        hotspots = metric.value
+        break
+}
                                     }
-                                    htmlRows += """
-                                        <tr>
-                                            <td>${project.name}</td>
-                                            <td style="color:green;"><b>SUCCESS</b></td>
-                                            <td>${qualityGate}</td>
-                                            <td>${gradeMap[security] ?: security}</td>
-                                            <td>${gradeMap[reliability] ?: reliability}</td>
-                                            <td>${gradeMap[maintainability] ?: maintainability}</td>
-                                            <td>${coverage}%</td>
-                                            <td>${duplication}%</td>
-                                        </tr>
-                                    """
+                                   htmlRows += """
+<tr>
+    <td>${project.name}</td>
+    <td style="color:green;"><b>SUCCESS</b></td>
+    <td>${qualityGate}</td>
+    <td>${vulnerabilities}</td>
+    <td>${bugs}</td>
+    <td>${codeSmells}</td>
+    <td>${coverage}%</td>
+    <td>${duplication}%</td>
+    <td>${hotspots}%</td>
+</tr>
+"""
                                 }
                             }
                         }
@@ -203,15 +213,16 @@ stages {
                     <br/>
                     <table border="1" cellpadding="8" cellspacing="0">
                         <tr>
-                            <th>Project</th>
-                            <th>Build Status</th>
-                            <th>Quality Gate</th>
-                            <th>Security</th>
-                            <th>Reliability</th>
-                            <th>Maintainability</th>
-                            <th>Coverage</th>
-                            <th>Duplication</th>
-                        </tr>
+    <th>Project</th>
+    <th>Build Status</th>
+    <th>Quality Gate</th>
+    <th>Vulnerabilities</th>
+    <th>Bugs</th>
+    <th>Code Smells</th>
+    <th>Coverage</th>
+    <th>Duplication</th>
+    <th>Hotspots Reviewed</th>
+</tr>
                         ${htmlRows}
                     </table>
                     <br/><br/>
