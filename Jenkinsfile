@@ -106,7 +106,7 @@ pipeline {
                                         def codeSmells = "0"
                                         def coverage = "0"
                                         def duplication = "0"
-                                        def hotspots = "0"
+                                        def securityHotspots = "0"
 
                                         if (json?.component?.measures) {
 
@@ -134,8 +134,8 @@ pipeline {
                                                         duplication = metric.value ?: "0"
                                                         break
 
-                                                    case "security_hotspots_reviewed":
-                                                        hotspots = metric.value ?: "0"
+                                                    case "security_hotspots":
+                                                        securityHotspots = metric.value
                                                         break
                                                 }
                                             }
@@ -151,7 +151,7 @@ pipeline {
     <td>${codeSmells}</td>
     <td>${coverage}%</td>
     <td>${duplication}%</td>
-    <td>${hotspots}%</td>
+    <td>${hotspots}</td>
 </tr>
 """
                                     }
@@ -214,7 +214,7 @@ Result :
     <th>Code Smells</th>
     <th>Coverage</th>
     <th>Duplication</th>
-    <th>Hotspots Reviewed</th>
+    <th>Security Hotspots</th>
 </tr>
 
 ${htmlRows}
