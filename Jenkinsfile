@@ -134,7 +134,7 @@ pipeline {
     <td>${codeSmells}</td>
     <td>${coverage}%</td>
     <td>${duplication}%</td>
-    <td>${hotspots}</td>
+    <td>${securityHotspots}</td>
 </tr>
 """
                                     }
