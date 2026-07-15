@@ -96,16 +96,18 @@ pipeline {
                                         
                                         echo "Issues Response Length: ${issuesResponse.length()}"
                                         
-                                        def issuesJson = readJSON text: issuesResponse
-
+                                        def issuesJson = new JsonSlurper().parseText(issuesResponse)
+                                        
+                                        if (issuesJson?.issues) {
+                                        
                                             issuesJson.issues.each { issue ->
-                                            
+                                        
                                                 csvContent += "\"${project.name}\","
                                                 csvContent += "\"${issue.severity ?: ''}\","
                                                 csvContent += "\"${issue.type ?: ''}\","
                                                 csvContent += "\"${issue.component ?: ''}\","
                                                 csvContent += "\"${issue.line ?: ''}\","
-                                                csvContent += "\"${(issue.message ?: '').replaceAll('"','')}\","
+                                                csvContent += "\"${(issue.message ?: '').replaceAll('\"','')}\","
                                                 csvContent += "\"${issue.status ?: ''}\"\n"
                                             }
                                         
