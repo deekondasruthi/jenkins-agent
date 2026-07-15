@@ -1,4 +1,4 @@
-import groovy.json.JsonSlurper
+import groovy.json.JsonSlurperClassic
 
 pipeline {
     agent any
@@ -82,7 +82,7 @@ pipeline {
                                         
                                         echo "Sonar Response: ${response}"
                                         
-                                        def json = new JsonSlurper().parseText(response)
+                                        def json = new JsonSlurperClassic().parseText(response)
                                         
                                         /* ------------------- GET SONAR ISSUES ------------------- */
                                         
@@ -96,7 +96,7 @@ pipeline {
                                         
                                         echo "Issues Response Length: ${issuesResponse.length()}"
                                         
-                                        def issuesJson = new JsonSlurper().parseText(issuesResponse)
+                                        def issuesJson = new JsonSlurperClassic().parseText(issuesResponse)
                                         
                                         if (issuesJson?.issues) {
                                         
