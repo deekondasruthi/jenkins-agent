@@ -20,12 +20,12 @@ pipeline {
 
                     def projects = [
                         [
-                            name: 'Facheck',
-                            repo: 'https://github.com/Baabujiventuress/Facheck_Springboot_Backend',
-                            branch: 'Facheck-Dev-DailyBuild',
-                            credentials: 'abhishek',
-                            sonarKey: 'Facheck-Dev_Backend',
-                            sonarName: 'Facheck-Dev_Backend'
+                            name: 'CMS',
+                            repo: 'https://github.com/Baabujiventuress/CMS_Springboot_Backend',
+                            branch: 'v1-dev-branch',
+                            credentials: 'rajeshkanna',
+                            sonarKey: 'CMS-Dev_Backend',
+                            sonarName: 'CMS-Dev_Backend'
                         ]
                     ]
 
