@@ -20,23 +20,6 @@ pipeline {
 
                     def projects = [
                         [
-                            name: 'CMS',
-                            repo: 'https://github.com/Baabujiventuress/CMS_Springboot_Backend',
-                            branch: 'v1-dev-branch',
-                            credentials: 'rajeshkanna',
-                            sonarKey: 'CMS-Dev_Backend',
-                            sonarName: 'CMS-Dev_Backend'
-                        ],
-                       
-                        [
-                            name: 'QuickRentPay',
-                            repo: 'https://github.com/Baabujiventuress/QuickRentPay_Springboot_Backend',
-                            branch: 'staging_build',
-                            credentials: 'prakash',
-                            sonarKey: 'Quickrentpay-Dev_Backend',
-                            sonarName: 'Quickrentpay-Dev_Backend'
-                        ],
-                        [
                             name: 'Facheck',
                             repo: 'https://github.com/Baabujiventuress/Facheck_Springboot_Backend',
                             branch: 'Facheck-Dev-DailyBuild',
@@ -47,7 +30,7 @@ pipeline {
                     ]
 
                     def htmlRows = ""
-
+                    def csvContent = "Project,Severity,Type,File,Line,Message,Status\n"
                     projects.each { project ->
 
                         echo "================================================="
@@ -237,6 +220,10 @@ ${htmlRows}
                         file: 'sonar-report.html',
                         text: finalHtml
                     )
+                    writeFile(
+                        file: 'sonar-issues.csv',
+                        text: csvContent
+                    )
                 }
             }
         }
@@ -252,7 +239,8 @@ ${htmlRows}
                     subject: "Multi Project SonarQube Report | ${env.JOB_NAME} #${env.BUILD_NUMBER}",
                     mimeType: 'text/html',
                     body: mailBody,
-                    to: 'sruthi.d@babujiventures.in'
+                    to: 'sruthi.d@babujiventures.in',
+                    attachmentsPattern: 'sonar-issues.csv'
                 )
             }
         }
