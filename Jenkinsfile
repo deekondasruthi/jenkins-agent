@@ -79,18 +79,49 @@ pipeline {
                                             """,
                                             returnStdout: true
                                         ).trim()
-
+                                        
                                         echo "Sonar Response: ${response}"
-
+                                        
                                         def json = new JsonSlurper().parseText(response)
-
+                                        
+                                        /* ------------------- GET SONAR ISSUES ------------------- */
+                                        
+                                        def issuesResponse = sh(
+                                            script: """
+                                                curl -s -u \$SONAR_TOKEN: \
+                                                "${SONAR_HOST_URL}/api/issues/search?componentKeys=${project.sonarKey}&resolved=false&ps=500"
+                                            """,
+                                            returnStdout: true
+                                        ).trim()
+                                        
+                                        echo "Issues Response Length: ${issuesResponse.length()}"
+                                        
+                                        def issuesJson = new JsonSlurper().parseText(issuesResponse)
+                                        
+                                        if (issuesJson?.issues) {
+                                        
+                                            issuesJson.issues.each { issue ->
+                                        
+                                                csvContent += "\"${project.name}\","
+                                                csvContent += "\"${issue.severity ?: ''}\","
+                                                csvContent += "\"${issue.type ?: ''}\","
+                                                csvContent += "\"${issue.component ?: ''}\","
+                                                csvContent += "\"${issue.line ?: ''}\","
+                                                csvContent += "\"${(issue.message ?: '').replaceAll('"','')}\","
+                                                csvContent += "\"${issue.status ?: ''}\"\n"
+                                            }
+                                        
+                                            echo "Added ${issuesJson.issues.size()} issues to CSV"
+                                        }
+                                        
+                                        /* -------------------------------------------------------- */
+                                        
                                         def vulnerabilities = "0"
                                         def bugs = "0"
                                         def codeSmells = "0"
                                         def coverage = "0"
                                         def duplication = "0"
                                         def securityHotspots = "0"
-
                                         if (json?.component?.measures) {
 
                                             json.component.measures.each { metric ->
