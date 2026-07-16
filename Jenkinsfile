@@ -108,7 +108,7 @@ pipeline {
                                         def issuesResponse = sh(
                                             script: """
                                                 curl -s -u \$SONAR_TOKEN: \
-                                                "${SONAR_HOST_URL}/api/issues/search?componentKeys=${project.sonarKey}&resolved=false&ps=500"
+                                                "${SONAR_HOST_URL}/api/issues/search?componentKeys=${project.sonarKey}&resolved=false&ps=10000"
                                             """,
                                             returnStdout: true
                                         ).trim()
@@ -339,33 +339,7 @@ ${htmlRows}
 </body>
 </html>
 """
-
-                    writeFile(
-                        file: 'sonar-report.html',
-                        text: finalHtml
-                    )
-                    writeFile(
-                        file: 'sonar-issues.csv',
-                        text: csvContent
-                    )
                 }
-            }
-        }
-    }
-
-    post {
-        always {
-            script {
-
-                def mailBody = readFile('sonar-report.html')
-
-                emailext(
-                    subject: "Multi Project SonarQube Report | ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                    mimeType: 'text/html',
-                    body: mailBody,
-                    to: 'sruthi.d@babujiventures.in',
-                    attachmentsPattern: 'sonar-issues.csv'
-                )
             }
         }
     }
