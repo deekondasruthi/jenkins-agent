@@ -23,7 +23,26 @@ pipeline {
                             branch: 'v1-dev-branch',
                             credentials: 'rajeshkanna',
                             sonarKey: 'CMS-Dev_Backend',
-                            sonarName: 'CMS-Dev_Backend'
+                            sonarName: 'CMS-Dev_Backend',
+                            mail: 'rajeshkanna.m@babujiventures.in'
+                        ],
+                        [
+                            name: 'QuickRentPay',
+                            repo: 'https://github.com/Baabujiventuress/QuickRentPay_Springboot_Backend',
+                            branch: 'staging_build',
+                            credentials: 'prakash',
+                            sonarKey: 'Quickrentpay-Dev_Backend',
+                            sonarName: 'Quickrentpay-Dev_Backend',
+                            mail: 'prakash.p@babujiventures.in'
+                        ],
+                        [
+                            name: 'Facheck',
+                            repo: 'https://github.com/Baabujiventuress/Facheck_Springboot_Backend',
+                            branch: 'Facheck-Dev-DailyBuild',
+                            credentials: 'abhishek',
+                            sonarKey: 'Facheck-Dev-Backend',
+                            sonarName: 'Facheck-Dev-Backend',
+                            mail: 'abhishek.p@babujiventures.in'
                         ]
                     ]
 
@@ -34,7 +53,9 @@ pipeline {
                         echo "================================================="
                         echo "Processing ${project.name}"
                         echo "================================================="
-
+                        def projectCsvContent =
+                            "Project,Severity,Type,File,Line,Message,Status\n"
+                        
                         try {
 
                             dir(project.name) {
@@ -100,13 +121,13 @@ pipeline {
                                         
                                             issuesJson.issues.each { issue ->
                                         
-                                                csvContent += "\"${project.name}\","
-                                                csvContent += "\"${issue.severity ?: ''}\","
-                                                csvContent += "\"${issue.type ?: ''}\","
-                                                csvContent += "\"${issue.component ?: ''}\","
-                                                csvContent += "\"${issue.line ?: ''}\","
-                                                csvContent += "\"${(issue.message ?: '').replaceAll('\"','')}\","
-                                                csvContent += "\"${issue.status ?: ''}\"\n"
+                                                projectCsvContent += "\"${project.name}\","
+                                                projectCsvContent += "\"${issue.severity ?: ''}\","
+                                                projectCsvContent += "\"${issue.type ?: ''}\","
+                                                projectCsvContent += "\"${issue.component ?: ''}\","
+                                                projectCsvContent += "\"${issue.line ?: ''}\","
+                                                projectCsvContent += "\"${(issue.message ?: '').replaceAll('\"','')}\","
+                                                projectCsvContent += "\"${issue.status ?: ''}\"\n"
                                             }
                                         
                                             echo "Added ${issuesJson.issues.size()} issues to CSV"
@@ -123,49 +144,123 @@ pipeline {
                                         if (json?.component?.measures) {
 
                                             json.component.measures.each { metric ->
-
+                                        
                                                 switch(metric.metric) {
-
+                                        
                                                     case "vulnerabilities":
                                                         vulnerabilities = metric.value ?: "0"
                                                         break
-
+                                        
                                                     case "bugs":
                                                         bugs = metric.value ?: "0"
                                                         break
-
+                                        
                                                     case "code_smells":
                                                         codeSmells = metric.value ?: "0"
                                                         break
-
+                                        
                                                     case "coverage":
                                                         coverage = metric.value ?: "0"
                                                         break
-
+                                        
                                                     case "duplicated_lines_density":
                                                         duplication = metric.value ?: "0"
                                                         break
-
+                                        
                                                     case "security_hotspots":
-                                                        securityHotspots = metric.value
+                                                        securityHotspots = metric.value ?: "0"
                                                         break
                                                 }
                                             }
                                         }
-
+                                        
+                                        /* SEND MAIL HERE */
+                                        
+                                        def projectCsv = "${project.name}-issues.csv"
+                                        
+                                        writeFile(
+                                            file: projectCsv,
+                                            text: projectCsvContent
+                                        )
+                                        
+                                        def projectHtml = """
+                                        <html>
+                                        <body>
+                                        
+                                        <h2>${project.name} SonarQube Report</h2>
+                                        
+                                        <p>
+                                        Build Number :
+                                        <b>${env.BUILD_NUMBER}</b>
+                                        </p>
+                                        
+                                        <p>
+                                        Quality Gate :
+                                        <b>${qualityGate}</b>
+                                        </p>
+                                        
+                                        <br/>
+                                        
+                                        <table border="1" cellpadding="8" cellspacing="0">
+                                        <tr>
+                                            <th>Vulnerabilities</th>
+                                            <th>Bugs</th>
+                                            <th>Code Smells</th>
+                                            <th>Coverage</th>
+                                            <th>Duplication</th>
+                                            <th>Security Hotspots</th>
+                                        </tr>
+                                        
+                                        <tr>
+                                            <td>${vulnerabilities}</td>
+                                            <td>${bugs}</td>
+                                            <td>${codeSmells}</td>
+                                            <td>${coverage}%</td>
+                                            <td>${duplication}%</td>
+                                            <td>${securityHotspots}</td>
+                                        </tr>
+                                        
+                                        </table>
+                                        
+                                        <br/>
+                                        
+                                        <p>
+                                        Dashboard:
+                                        <a href="${SONAR_HOST_URL}/dashboard?id=${project.sonarKey}">
+                                        ${project.sonarName}
+                                        </a>
+                                        </p>
+                                        
+                                        <br/>
+                                        
+                                        <p>
+                                        Attached CSV contains Sonar issues for ${project.name}.
+                                        </p>
+                                        
+                                        </body>
+                                        </html>
+                                        """
+                                        
+                                        emailext(
+                                            subject: "${project.name} SonarQube Report | Build #${env.BUILD_NUMBER}",
+                                            mimeType: 'text/html',
+                                            body: projectHtml,
+                                            to: "${project.mail},sruthi.d@babujiventures.in,Faisal.Ahmed@basispay.in",
+                                            attachmentsPattern: projectCsv
+                                        )
                                         htmlRows += """
-<tr>
-    <td>${project.name}</td>
-    <td style="color:green;"><b>SUCCESS</b></td>
-    <td>${qualityGate}</td>
-    <td>${vulnerabilities}</td>
-    <td>${bugs}</td>
-    <td>${codeSmells}</td>
-    <td>${coverage}%</td>
-    <td>${duplication}%</td>
-    <td>${securityHotspots}</td>
-</tr>
-"""
+                                        <tr>
+                                            <td>${project.name}</td>
+                                            <td style="color:green;"><b>SUCCESS</b></td>
+                                            <td>${qualityGate}</td>
+                                            <td>${vulnerabilities}</td>
+                                            <td>${bugs}</td>
+                                            <td>${codeSmells}</td>
+                                            <td>${coverage}%</td>
+                                            <td>${duplication}%</td>
+                                            <td>${securityHotspots}</td>
+                                        </tr>
+                                        """
                                     }
                                 }
                             }
