@@ -18,24 +18,6 @@ pipeline {
 
                     def projects = [
                         [
-                            name: 'CMS',
-                            repo: 'https://github.com/Baabujiventuress/CMS_Springboot_Backend',
-                            branch: 'v1-dev-branch',
-                            credentials: 'rajeshkanna',
-                            sonarKey: 'CMS-Dev_Backend',
-                            sonarName: 'CMS-Dev_Backend',
-                            mail: 'rajeshkanna.m@babujiventures.in'
-                        ],
-                        [
-                            name: 'QuickRentPay',
-                            repo: 'https://github.com/Baabujiventuress/QuickRentPay_Springboot_Backend',
-                            branch: 'staging_build',
-                            credentials: 'prakash',
-                            sonarKey: 'Quickrentpay-Dev_Backend',
-                            sonarName: 'Quickrentpay-Dev_Backend',
-                            mail: 'prakash.p@babujiventures.in'
-                        ],
-                        [
                             name: 'Facheck',
                             repo: 'https://github.com/Baabujiventuress/Facheck_Springboot_Backend',
                             branch: 'Facheck-Dev-DailyBuild',
@@ -94,7 +76,7 @@ pipeline {
                                         def response = sh(
                                             script: """
                                                 curl -s -u \$SONAR_TOKEN: \
-                                                "${SONAR_HOST_URL}/api/measures/component?component=${project.sonarKey}&metricKeys=vulnerabilities,bugs,code_smells,coverage,duplicated_lines_density,security_hotspots"
+                                                "${SONAR_HOST_URL}/api/measures/component?component=${project.sonarKey}&metricKeys=vulnerabilities,bugs,code_smells,duplicated_lines_density,security_hotspots"
                                             """,
                                             returnStdout: true
                                         ).trim()
@@ -137,9 +119,6 @@ pipeline {
                                         
                                         def vulnerabilities = "0"
                                         def bugs = "0"
-                                        def codeSmells = "0"
-                                        def coverage = "0"
-                                        def duplication = "0"
                                         def securityHotspots = "0"
                                         if (json?.component?.measures) {
 
@@ -153,18 +132,6 @@ pipeline {
                                         
                                                     case "bugs":
                                                         bugs = metric.value ?: "0"
-                                                        break
-                                        
-                                                    case "code_smells":
-                                                        codeSmells = metric.value ?: "0"
-                                                        break
-                                        
-                                                    case "coverage":
-                                                        coverage = metric.value ?: "0"
-                                                        break
-                                        
-                                                    case "duplicated_lines_density":
-                                                        duplication = metric.value ?: "0"
                                                         break
                                         
                                                     case "security_hotspots":
@@ -185,56 +152,77 @@ pipeline {
                                         
                                         def projectHtml = """
                                         <html>
+                                        <head>
+                                        <style>
+                                        body {
+                                            font-family: Arial, sans-serif;
+                                            color: #333333;
+                                        }
+                                        
+                                        table {
+                                            border-collapse: collapse;
+                                            width: 70%;
+                                        }
+                                        
+                                        th {
+                                            background-color: #f2f2f2;
+                                        }
+                                        
+                                        th, td {
+                                            border: 1px solid #dddddd;
+                                            padding: 10px;
+                                            text-align: center;
+                                        }
+                                        </style>
+                                        </head>
+                                        
                                         <body>
                                         
-                                        <h2>${project.name} SonarQube Report</h2>
+                                        <h2>SonarQube Security & Quality Report - ${project.name}</h2>
+                                        
+                                        <p>Dear Team,</p>
                                         
                                         <p>
-                                        Build Number :
-                                        <b>${env.BUILD_NUMBER}</b>
+                                        The latest SonarQube analysis for
+                                        <b>${project.name}</b>
+                                        has been completed successfully.
+                                        Please find the quality summary below.
                                         </p>
                                         
-                                        <p>
-                                        Quality Gate :
-                                        <b>${qualityGate}</b>
-                                        </p>
-                                        
-                                        <br/>
-                                        
-                                        <table border="1" cellpadding="8" cellspacing="0">
+                                        <table>
                                         <tr>
+                                            <th>Quality Gate</th>
                                             <th>Vulnerabilities</th>
                                             <th>Bugs</th>
-                                            <th>Code Smells</th>
-                                            <th>Coverage</th>
-                                            <th>Duplication</th>
                                             <th>Security Hotspots</th>
                                         </tr>
                                         
                                         <tr>
+                                            <td><b>${qualityGate}</b></td>
                                             <td>${vulnerabilities}</td>
                                             <td>${bugs}</td>
-                                            <td>${codeSmells}</td>
-                                            <td>${coverage}%</td>
-                                            <td>${duplication}%</td>
                                             <td>${securityHotspots}</td>
                                         </tr>
-                                        
                                         </table>
                                         
-                                        <br/>
+                                        <br>
                                         
                                         <p>
-                                        Dashboard:
+                                        <b>SonarQube Dashboard:</b><br>
                                         <a href="${SONAR_HOST_URL}/dashboard?id=${project.sonarKey}">
                                         ${project.sonarName}
                                         </a>
                                         </p>
                                         
-                                        <br/>
+                                        <p>
+                                        Please review and address the issues listed in the attached report.
+                                        </p>
+                                        
+                                        <br>
                                         
                                         <p>
-                                        Attached CSV contains Sonar issues for ${project.name}.
+                                        Regards,<br>
+                                        DevOps Team
                                         </p>
                                         
                                         </body>
@@ -242,10 +230,10 @@ pipeline {
                                         """
                                         
                                         emailext(
-                                            subject: "${project.name} SonarQube Report | Build #${env.BUILD_NUMBER}",
+                                            subject: "${project.name} - SonarQube Analysis Report",
                                             mimeType: 'text/html',
                                             body: projectHtml,
-                                            to: "${project.mail},sruthi.d@babujiventures.in,Faisal.Ahmed@basispay.in",
+                                            to: "${project.mail},sruthi.d@babujiventures.in",
                                             attachmentsPattern: projectCsv
                                         )
                                         htmlRows += """
@@ -273,72 +261,72 @@ pipeline {
                             currentBuild.result = 'UNSTABLE'
 
                             htmlRows += """
-<tr>
-    <td>${project.name}</td>
-    <td style="color:red;"><b>FAILED</b></td>
-    <td>N/A</td>
-    <td>N/A</td>
-    <td>N/A</td>
-    <td>N/A</td>
-    <td>N/A</td>
-    <td>N/A</td>
-    <td>N/A</td>
-</tr>
-"""
+                            <tr>
+                                <td>${project.name}</td>
+                                <td style="color:red;"><b>FAILED</b></td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                                <td>N/A</td>
+                            </tr>
+                            """
                         }
                     }
 
                     def finalHtml = """
-<html>
-<body>
-
-<h2>Multi Project SonarQube Report</h2>
-
-<p>
-Build Number :
-<b>${env.BUILD_NUMBER}</b>
-</p>
-
-<p>
-Job Name :
-<b>${env.JOB_NAME}</b>
-</p>
-
-<p>
-Result :
-<b>${currentBuild.currentResult}</b>
-</p>
-
-<br/>
-
-<table border="1" cellpadding="8" cellspacing="0">
-<tr>
-    <th>Project</th>
-    <th>Build Status</th>
-    <th>Quality Gate</th>
-    <th>Vulnerabilities</th>
-    <th>Bugs</th>
-    <th>Code Smells</th>
-    <th>Coverage</th>
-    <th>Duplication</th>
-    <th>Security Hotspots</th>
-</tr>
-
-${htmlRows}
-
-</table>
-
-<br/><br/>
-
-<p>Regards,</p>
-<p>DevOps Team</p>
-
-<img src="https://babujiventures.in/assets/img/clients/baabuji-logo-1-cropped.png"
-     style="height:60px;"/>
-
-</body>
-</html>
-"""
+                    <html>
+                    <body>
+                    
+                    <h2>Multi Project SonarQube Report</h2>
+                    
+                    <p>
+                    Build Number :
+                    <b>${env.BUILD_NUMBER}</b>
+                    </p>
+                    
+                    <p>
+                    Job Name :
+                    <b>${env.JOB_NAME}</b>
+                    </p>
+                    
+                    <p>
+                    Result :
+                    <b>${currentBuild.currentResult}</b>
+                    </p>
+                    
+                    <br/>
+                    
+                    <table border="1" cellpadding="8" cellspacing="0">
+                    <tr>
+                        <th>Project</th>
+                        <th>Build Status</th>
+                        <th>Quality Gate</th>
+                        <th>Vulnerabilities</th>
+                        <th>Bugs</th>
+                        <th>Code Smells</th>
+                        <th>Coverage</th>
+                        <th>Duplication</th>
+                        <th>Security Hotspots</th>
+                    </tr>
+                    
+                    ${htmlRows}
+                    
+                    </table>
+                    
+                    <br/><br/>
+                    
+                    <p>Regards,</p>
+                    <p>DevOps Team</p>
+                    
+                    <img src="https://babujiventures.in/assets/img/clients/baabuji-logo-1-cropped.png"
+                         style="height:60px;"/>
+                    
+                    </body>
+                    </html>
+                    """
                 }
             }
         }
