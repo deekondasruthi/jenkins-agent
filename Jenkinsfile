@@ -243,9 +243,6 @@ pipeline {
                                             <td>${qualityGate}</td>
                                             <td>${vulnerabilities}</td>
                                             <td>${bugs}</td>
-                                            <td>${codeSmells}</td>
-                                            <td>${coverage}%</td>
-                                            <td>${duplication}%</td>
                                             <td>${securityHotspots}</td>
                                         </tr>
                                         """
@@ -264,9 +261,6 @@ pipeline {
                             <tr>
                                 <td>${project.name}</td>
                                 <td style="color:red;"><b>FAILED</b></td>
-                                <td>N/A</td>
-                                <td>N/A</td>
-                                <td>N/A</td>
                                 <td>N/A</td>
                                 <td>N/A</td>
                                 <td>N/A</td>
@@ -306,9 +300,6 @@ pipeline {
                         <th>Quality Gate</th>
                         <th>Vulnerabilities</th>
                         <th>Bugs</th>
-                        <th>Code Smells</th>
-                        <th>Coverage</th>
-                        <th>Duplication</th>
                         <th>Security Hotspots</th>
                     </tr>
                     
