@@ -96,13 +96,23 @@ pipeline {
                                         ).trim()
                                         
                                         echo "Issues Response Length: ${issuesResponse.length()}"
-                                        
-                                        def issuesJson = readJSON text: issuesResponse
 
-                                        echo "Total Issues Returned: ${issuesJson.total}"
+                                        def issuesJson = readJSON text: issuesResponse
                                         
-                                        issuesJson.issues.take(10).each { issue ->
-                                            echo "TYPE=${issue.type} | SEVERITY=${issue.severity} | MESSAGE=${issue.message}"
+                                        echo "Issues Response: ${issuesResponse}"
+                                        
+                                        if (issuesJson?.issues) {
+                                        
+                                            echo "Total Issues Returned: ${issuesJson.issues.size()}"
+                                        
+                                            issuesJson.issues.take(10).each { issue ->
+                                                echo "TYPE=${issue.type} | SEVERITY=${issue.severity} | MESSAGE=${issue.message}"
+                                            }
+                                        
+                                        } else {
+                                        
+                                            echo "No issues returned from SonarQube"
+                                        
                                         }
                                         
                                         if (issuesJson?.issues) {
