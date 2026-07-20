@@ -99,16 +99,10 @@ pipeline {
 
                                         def issuesJson = readJSON text: issuesResponse
                                                                                 
-                                        if (issuesJson?.issues != null) {
-
+                                        if (issuesJson?.issues) {
                                             echo "Total Issues Returned: ${issuesJson.issues.size()}"
-                                        
-                                            issuesJson.issues.take(10).each { issue ->
-                                                echo "TYPE=${issue.type} | SEVERITY=${issue.severity} | MESSAGE=${issue.message}"
-                                            }
-                                        
-                                        } else {                                        
-                                            echo "Response = ${issuesResponse}"
+                                        } else {
+                                            echo "No issues returned from SonarQube"
                                         }
                                         
                                         if (issuesJson?.issues) {
@@ -128,8 +122,6 @@ pipeline {
                                                     projectCsvContent += "\"${(issue.message ?: '').replaceAll('\"','')}\"\n"
                                                 }
                                             }
-                                        
-                                            echo "Added Security Issues To CSV"
                                         }
                                         
                                         /* -------------------------------------------------------- */
