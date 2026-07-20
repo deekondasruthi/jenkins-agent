@@ -90,7 +90,7 @@ pipeline {
                                         def issuesResponse = sh(
                                             script: """
                                                 curl -s -u \$SONAR_TOKEN: \
-                                                "${SONAR_HOST_URL}/api/issues/search?componentKeys=${project.sonarKey}&types=BUG,VULNERABILITY&resolved=false&ps=10000"
+                                                "${SONAR_HOST_URL}/api/issues/search?componentKeys=${project.sonarKey}&types=BUG,VULNERABILITY&resolved=false&ps=500"
                                             """,
                                             returnStdout: true
                                         ).trim()
