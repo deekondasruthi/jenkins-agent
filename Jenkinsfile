@@ -99,7 +99,7 @@ pipeline {
 
                                         def issuesJson = readJSON text: issuesResponse
                                         
-                                        echo "Issues Response: ${issuesResponse}"
+                                        echo "Issues Response Full = ${issuesResponse}"
                                         
                                         if (issuesJson?.issues) {
                                         
