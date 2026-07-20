@@ -90,7 +90,7 @@ pipeline {
                                         def issuesResponse = sh(
                                             script: """
                                                 curl -s -u \$SONAR_TOKEN: \
-                                                "${SONAR_HOST_URL}/api/issues/search?componentKeys=${project.sonarKey}&resolved=false&ps=10000"
+                                                "${SONAR_HOST_URL}/api/issues/search?componentKeys=${project.sonarKey}&types=BUG,VULNERABILITY&resolved=false&ps=10000"
                                             """,
                                             returnStdout: true
                                         ).trim()
@@ -98,15 +98,20 @@ pipeline {
                                         echo "Issues Response Length: ${issuesResponse.length()}"
                                         
                                         def issuesJson = readJSON text: issuesResponse
+
+                                        echo "Total Issues Returned: ${issuesJson.total}"
+                                        
+                                        issuesJson.issues.take(10).each { issue ->
+                                            echo "TYPE=${issue.type} | SEVERITY=${issue.severity} | MESSAGE=${issue.message}"
+                                        }
                                         
                                         if (issuesJson?.issues) {
-
+                                        
                                             issuesJson.issues.each { issue ->
                                         
                                                 if (
                                                     issue.type == 'BUG' ||
-                                                    issue.type == 'VULNERABILITY' ||
-                                                    issue.type == 'SECURITY_HOTSPOT'
+                                                    issue.type == 'VULNERABILITY'
                                                 ) {
                                         
                                                     projectCsvContent += "\"${project.name}\","
@@ -176,7 +181,7 @@ pipeline {
                                         
                                         table {
                                             border-collapse: collapse;
-                                            width: 70%;
+                                            width: 75%;
                                         }
                                         
                                         th {
@@ -193,7 +198,7 @@ pipeline {
                                         
                                         <body>
                                         
-                                        <h2>SonarQube Security & Quality Report - ${project.name}</h2>
+                                        <h2>SonarQube Analysis Report - ${project.name}</h2>
                                         
                                         <p>Dear Team,</p>
                                         
@@ -201,7 +206,7 @@ pipeline {
                                         The latest SonarQube analysis for
                                         <b>${project.name}</b>
                                         has been completed successfully.
-                                        Please find the quality summary below.
+                                        Please review the quality metrics summarized below.
                                         </p>
                                         
                                         <table>
@@ -222,9 +227,26 @@ pipeline {
                                             <td>${duplication}%</td>
                                             <td>${securityHotspots}</td>
                                         </tr>
+                                        
                                         </table>
                                         
                                         <br>
+                                        
+                                        <p>
+                                        <b>Attached Report:</b><br>
+                                        The attached CSV file contains detailed information related to:
+                                        </p>
+                                        
+                                        <ul>
+                                            <li>Vulnerabilities</li>
+                                            <li>Bugs</li>
+                                            <li>Security Hotspots</li>
+                                        </ul>
+                                        
+                                        <p>
+                                        <b>Note:</b> Code Smells and Duplication details are not included in the attachment.
+                                        Please review the SonarQube dashboard for complete analysis and remediation details.
+                                        </p>
                                         
                                         <p>
                                         <b>SonarQube Dashboard:</b><br>
@@ -233,15 +255,17 @@ pipeline {
                                         </a>
                                         </p>
                                         
+                                        <br>
+                                        
                                         <p>
-                                        Please review and address the issues listed in the attached report.
+                                        Kindly review and address the identified issues as part of the ongoing code quality and security improvement process.
                                         </p>
                                         
                                         <br>
                                         
                                         <p>
                                         Regards,<br>
-                                        DevOps Team
+                                        <b>DevOps Team</b>
                                         </p>
                                         
                                         </body>
