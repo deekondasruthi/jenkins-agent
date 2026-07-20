@@ -98,9 +98,7 @@ pipeline {
                                         echo "Issues Response Length: ${issuesResponse.length()}"
 
                                         def issuesJson = readJSON text: issuesResponse
-                                        
-                                        echo "Issues Response Full = ${issuesResponse}"
-                                        
+                                                                                
                                         if (issuesJson?.issues != null) {
 
                                             echo "Total Issues Returned: ${issuesJson.issues.size()}"
@@ -110,7 +108,6 @@ pipeline {
                                             }
                                         
                                         } else {                                        
-                                            echo "No issues array found in API response"
                                             echo "Response = ${issuesResponse}"
                                         }
                                         
