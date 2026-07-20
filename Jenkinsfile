@@ -101,18 +101,17 @@ pipeline {
                                         
                                         echo "Issues Response Full = ${issuesResponse}"
                                         
-                                        if (issuesJson?.issues) {
-                                        
+                                        if (issuesJson?.issues != null) {
+
                                             echo "Total Issues Returned: ${issuesJson.issues.size()}"
                                         
                                             issuesJson.issues.take(10).each { issue ->
                                                 echo "TYPE=${issue.type} | SEVERITY=${issue.severity} | MESSAGE=${issue.message}"
                                             }
                                         
-                                        } else {
-                                        
-                                            echo "No issues returned from SonarQube"
-                                        
+                                        } else {                                        
+                                            echo "No issues array found in API response"
+                                            echo "Response = ${issuesResponse}"
                                         }
                                         
                                         if (issuesJson?.issues) {
