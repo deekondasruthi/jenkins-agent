@@ -36,7 +36,7 @@ pipeline {
                         echo "Processing ${project.name}"
                         echo "================================================="
                         def projectCsvContent =
-                            "Project,Severity,Type,File,Line,Message,Status\n"
+                                    "Project,Severity,Type,File,Line,Message\n"
                         
                         try {
 
@@ -100,25 +100,33 @@ pipeline {
                                         def issuesJson = readJSON text: issuesResponse
                                         
                                         if (issuesJson?.issues) {
-                                        
+
                                             issuesJson.issues.each { issue ->
                                         
-                                                projectCsvContent += "\"${project.name}\","
-                                                projectCsvContent += "\"${issue.severity ?: ''}\","
-                                                projectCsvContent += "\"${issue.type ?: ''}\","
-                                                projectCsvContent += "\"${issue.component ?: ''}\","
-                                                projectCsvContent += "\"${issue.line ?: ''}\","
-                                                projectCsvContent += "\"${(issue.message ?: '').replaceAll('\"','')}\","
-                                                projectCsvContent += "\"${issue.status ?: ''}\"\n"
+                                                if (
+                                                    issue.type == 'BUG' ||
+                                                    issue.type == 'VULNERABILITY' ||
+                                                    issue.type == 'SECURITY_HOTSPOT'
+                                                ) {
+                                        
+                                                    projectCsvContent += "\"${project.name}\","
+                                                    projectCsvContent += "\"${issue.severity ?: ''}\","
+                                                    projectCsvContent += "\"${issue.type ?: ''}\","
+                                                    projectCsvContent += "\"${issue.component ?: ''}\","
+                                                    projectCsvContent += "\"${issue.line ?: ''}\","
+                                                    projectCsvContent += "\"${(issue.message ?: '').replaceAll('\"','')}\"\n"
+                                                }
                                             }
                                         
-                                            echo "Added ${issuesJson.issues.size()} issues to CSV"
+                                            echo "Added Security Issues To CSV"
                                         }
                                         
                                         /* -------------------------------------------------------- */
                                         
                                         def vulnerabilities = "0"
                                         def bugs = "0"
+                                        def codeSmells = "0"
+                                        def duplication = "0"
                                         def securityHotspots = "0"
                                         if (json?.component?.measures) {
 
@@ -132,6 +140,13 @@ pipeline {
                                         
                                                     case "bugs":
                                                         bugs = metric.value ?: "0"
+                                                        break
+                                                    case "code_smells":
+                                                        codeSmells = metric.value ?: "0"
+                                                        break
+                                                    
+                                                    case "duplicated_lines_density":
+                                                        duplication = metric.value ?: "0"
                                                         break
                                         
                                                     case "security_hotspots":
@@ -194,6 +209,8 @@ pipeline {
                                             <th>Quality Gate</th>
                                             <th>Vulnerabilities</th>
                                             <th>Bugs</th>
+                                            <th>Code Smells</th>
+                                            <th>Duplication</th>
                                             <th>Security Hotspots</th>
                                         </tr>
                                         
@@ -201,6 +218,8 @@ pipeline {
                                             <td><b>${qualityGate}</b></td>
                                             <td>${vulnerabilities}</td>
                                             <td>${bugs}</td>
+                                            <td>${codeSmells}</td>
+                                            <td>${duplication}%</td>
                                             <td>${securityHotspots}</td>
                                         </tr>
                                         </table>
@@ -272,23 +291,17 @@ pipeline {
 
                     def finalHtml = """
                     <html>
-                    <body>
+                    <body style="font-family: Arial, sans-serif;">
                     
-                    <h2>Multi Project SonarQube Report</h2>
+                    <h2>SonarQube Analysis Summary Report</h2>
                     
                     <p>
-                    Build Number :
-                    <b>${env.BUILD_NUMBER}</b>
+                    Dear Team,
                     </p>
                     
                     <p>
-                    Job Name :
-                    <b>${env.JOB_NAME}</b>
-                    </p>
-                    
-                    <p>
-                    Result :
-                    <b>${currentBuild.currentResult}</b>
+                    The scheduled SonarQube analysis has been completed.
+                    Please find below the latest quality metrics for the analyzed applications.
                     </p>
                     
                     <br/>
@@ -307,10 +320,22 @@ pipeline {
                     
                     </table>
                     
-                    <br/><br/>
+                    <br/>
+                    
+                    <p>
+                    Detailed issue reports have been shared separately with the respective project teams.
+                    </p>
+                    
+                    <p>
+                    For complete code quality analysis, including
+                    <b>Code Smells</b> and <b>Duplication</b> details,
+                    please review the respective SonarQube project dashboards.
+                    </p>
+                    
+                    <br/>
                     
                     <p>Regards,</p>
-                    <p>DevOps Team</p>
+                    <p><b>DevOps Team</b></p>
                     
                     <img src="https://babujiventures.in/assets/img/clients/baabuji-logo-1-cropped.png"
                          style="height:60px;"/>
