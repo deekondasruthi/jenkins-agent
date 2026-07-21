@@ -18,6 +18,51 @@ pipeline {
 
                     def projects = [
                         [
+                            name: 'AI-Chatbot',
+                            repo: 'https://github.com/Baabujiventuress/ai_chatbot_backend',
+                            branch: 'Staging',
+                            credentials: 'raghul',
+                            sonarKey: 'AI-Chatbot-Staging_Backend',
+                            sonarName: 'AI-Chatbot-Staging_Backend',
+                            mail: 'raghul.s@babujiventures.in'
+                        ],
+                        [
+                            name: 'Atus',
+                            repo: 'https://github.com/Baabujiventuress/ATUS_Springboot_Backend',
+                            branch: 'ATUS-Dev',
+                            credentials: 'saravanan',
+                            sonarKey: 'Atus-Dev_Backend',
+                            sonarName: 'Atus-Dev_Backend',
+                            mail: 'saravanan.i@babujiventures.in'
+                        ],
+                        [
+                            name: 'Bustle',
+                            repo: 'https://github.com/Baabujiventuress/Bustle_Springboot_Backend',
+                            branch: 'bustle-dev',
+                            credentials: 'swetha',
+                            sonarKey: 'Bustle-Dev_Backend',
+                            sonarName: 'Bustle-Dev_Backend',
+                            mail: 'swetha.d@babujiventures.in'
+                        ],
+                        [
+                            name: 'Cinchironing',
+                            repo: 'https://github.com/Baabujiventuress/CinchLaundry_Springboot_Backend',
+                            branch: 'Dev-Env',
+                            credentials: 'sathiyapriya',
+                            sonarKey: 'Cinchironing-Dev_Backend',
+                            sonarName: 'Cinchironing-Dev_Backend',
+                            mail: 'sathiyapriya.c@babujiventures.in'
+                        ],
+                        [
+                            name: 'CMS',
+                            repo: 'https://github.com/Baabujiventuress/CMS_Springboot_Backend',
+                            branch: 'v1-dev-branch',
+                            credentials: 'rajeshkanna',
+                            sonarKey: 'CMS-Dev_Backend',
+                            sonarName: 'CMS-Dev_Backend',
+                            mail: 'rajeshkanna.m@babujiventures.in'
+                        ],
+                        [
                             name: 'Facheck',
                             repo: 'https://github.com/Baabujiventuress/Facheck_Springboot_Backend',
                             branch: 'Facheck-Dev-DailyBuild',
@@ -25,7 +70,72 @@ pipeline {
                             sonarKey: 'Facheck-Dev-Backend',
                             sonarName: 'Facheck-Dev-Backend',
                             mail: 'abhishek.p@babujiventures.in'
-                        ]
+                        ],
+                        [
+                            name: 'FarginConnect',
+                            repo: 'https://github.com/Baabujiventuress/FarginConnect_Springboot_Backend',
+                            branch: 'Fargin-X-Admin',
+                            credentials: 'manimegala',
+                            sonarKey: 'FarginConnect-X-Admin-Dev_Backend',
+                            sonarName: 'FarginConnect-X-Admin-Dev_Backend',
+                            mail: 'manimegala.d@babujiventures.in'
+                        ],
+                        [
+                            name: 'FarginConnect',
+                            repo: 'https://github.com/Baabujiventuress/FarginConnect_Springboot_Backend',
+                            branch: 'Fargin-X-Entity',
+                            credentials: 'manimegala',
+                            sonarKey: 'FarginConnect-X-Entity-Dev_Backend',
+                            sonarName: 'FarginConnect-X-Entity-Dev_Backend',
+                            mail: 'manimegala.d@babujiventures.in'
+                        ],
+                        [
+                            name: 'FarginConnect_PayingGuest',
+                            repo: 'https://github.com/Baabujiventuress/Fargin_Paying_Guest_Backend',
+                            branch: 'dev',
+                            credentials: 'prakash',
+                            sonarKey: 'FarginConnect_PG-Dev_Backend',
+                            sonarName: 'FarginConnect_PG-Dev_Backend',
+                            mail: 'prakash.p@babujiventures.in'
+                        ],
+                        [
+                            name: 'ITCMS',
+                            repo: 'https://github.com/Baabujiventuress/ITCMS_Springboot_Backend',
+                            branch: 'ITCMS-DEV',
+                            credentials: 'rajeshkanna',
+                            sonarKey: 'ITSMS-Dev_Backend',
+                            sonarName: 'ITCMS-Dev_Backend',
+                            mail: 'rajeshkanna.m@babujiventures.in'
+                        ],
+                        [
+                            name: 'Koyambedu',
+                            repo: 'https://github.com/Baabujiventuress/Koyambedu_Springboot_Backend',
+                            branch: 'mmc_dev',
+                            credentials: 'abhishek',
+                            sonarKey: 'Koyambedu-Dev_Backend',
+                            sonarName: 'Koyambedu-Dev_Backend',
+                            mail: 'abhishek.p@babujiventures.in'
+                        ],
+                        [
+                            name: 'QuickRentPay',
+                            repo: 'https://github.com/Baabujiventuress/QuickRentPay_Springboot_Backend',
+                            branch: 'staging_build',
+                            credentials: 'prakash',
+                            sonarKey: 'Quickrentpay-staging_Backend',
+                            sonarName: 'Quickrentpay-staging_Backend',
+                            mail: 'prakash.p@babujiventures.in'
+                        ],
+                        [
+                            name: 'SCV_Partner',
+                            repo: 'https://github.com/Baabujiventuress/SCV_Partner_Onboarding_Backend',
+                            branch: 'Staging',
+                            credentials: 'prakash',
+                            sonarKey: 'SCV-Partner-Staging_Backend',
+                            sonarName: 'SCV-Partner-Staging_Backend',
+                            mail: 'prakash.p@babujiventures.in'
+                        ],
+
+                        
                     ]
 
                     def htmlRows = ""
