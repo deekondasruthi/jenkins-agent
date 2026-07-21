@@ -1,7 +1,7 @@
 pipeline {
     agent any
     triggers {
-        cron('*/5 * * * *')
+        cron('0 0 * * *')
     }
     environment {
         SONAR_HOST_URL = 'http://192.168.1.158:9000'
