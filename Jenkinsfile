@@ -1,6 +1,8 @@
 pipeline {
     agent any
-
+    triggers {
+        cron('40 22 * * *')
+    }
     environment {
         SONAR_HOST_URL = 'http://192.168.1.158:9000'
     }
@@ -133,9 +135,7 @@ pipeline {
                             sonarKey: 'SCV-Partner-Staging_Backend',
                             sonarName: 'SCV-Partner-Staging_Backend',
                             mail: 'prakash.p@babujiventures.in'
-                        ],
-
-                        
+                        ]
                     ]
 
                     def htmlRows = ""
