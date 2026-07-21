@@ -384,7 +384,7 @@ pipeline {
                                             subject: "${project.name} - SonarQube Analysis Report",
                                             mimeType: 'text/html',
                                             body: projectHtml,
-                                            to: "${project.mail},sruthi.d@babujiventures.in",
+                                            to: "sruthi.d@babujiventures.in",
                                             attachmentsPattern: projectCsv
                                         )
                                         htmlRows += """
