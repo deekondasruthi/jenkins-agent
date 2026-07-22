@@ -4,7 +4,7 @@ pipeline {
         cron('0 0 * * *')
     }
     environment {
-        SONAR_HOST_URL = 'http://192.168.1.158:9000'
+        SONAR_HOST_URL = 'https://sonarqube.babujiventures.in'
     }
 
     stages {
